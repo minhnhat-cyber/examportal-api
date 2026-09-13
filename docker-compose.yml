@@ -1,0 +1,15 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:8.0-ubi8
+    container_name: examportal-mongodb
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: examportal_admin
+      MONGODB_INITDB_ROOT_PASSWORD: examportal_local_password
+      MONGODB_INITDB_DATABASE: examportal
+    volumes:
+      - examportal_data:/data/db
+volumes:
+  examportal_data:
