@@ -85,7 +85,15 @@ Questions, exams, and student accounts expose complete create, read, update, and
    npm run dev
    ```
 
-The API is available at `http://localhost:3000`.
+The API is available at `http://localhost:3000/backend`.
+
+## Authentication
+
+Sign in with `POST /backend/api/auth/login` using email and password. Sessions use an eight-hour HttpOnly cookie; clients must include credentials. `GET /backend/api/auth/me` returns the signed-in account and `POST /backend/api/auth/logout` revokes its session. Teacher management endpoints require the teacher role; student endpoints use the authenticated student's identity, not a caller-supplied ID. Production requires HTTPS and an exact `FRONTEND_URL` origin.
+
+Seeded demo accounts: `teacher@examportal.local`, `alice@examportal.local`, and `john@examportal.local`, with password `Password123!`. These are for evaluation only: change demo passwords and remove unused accounts before real use. Never rerun the seed against live data because it resets demo accounts and exams.
+
+Run authentication checks with `node --test src/lib/auth.test.js`.
 
 ## Environment variables
 

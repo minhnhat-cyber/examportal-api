@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
 import { errorResponse, successResponse } from "@/lib/utils";
@@ -7,7 +8,7 @@ export function OPTIONS() {
   return new Response(null, { status: 204, headers: corsHeaders });
 }
 
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search")?.trim();
@@ -33,7 +34,7 @@ export async function GET(request) {
   }
 }
 
-export async function POST(request) {
+async function handlePOST(request) {
   try {
     const validation = validateQuestion(await request.json());
     if (validation.error) return errorResponse(validation.error, 400);
@@ -49,3 +50,7 @@ export async function POST(request) {
     return errorResponse("Unable to create the question.", 500);
   }
 }
+
+export const GET = withAuth("teacher", handleGET);
+export const POST = withAuth("teacher", handlePOST);
+

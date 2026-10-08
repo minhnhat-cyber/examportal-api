@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import bcrypt from "bcrypt";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -17,7 +18,7 @@ const serialize = (user, stats = {}) => ({
 });
 
 /** The signed-in student's own profile, plus a couple of summary numbers. */
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const client = await getClientPromise();
     const db = client.db(process.env.DB_NAME || "examportal");
@@ -52,7 +53,7 @@ export async function GET(request) {
  * Changing the password requires the current one; pointless today with no
  * login, but it means the check is already in place when auth lands.
  */
-export async function PUT(request) {
+async function handlePUT(request) {
   try {
     const client = await getClientPromise();
     const db = client.db(process.env.DB_NAME || "examportal");
@@ -89,3 +90,6 @@ export async function PUT(request) {
     return errorResponse("Unable to update your profile.", 500);
   }
 }
+export const GET = withAuth("student", handleGET);
+export const PUT = withAuth("student", handlePUT);
+

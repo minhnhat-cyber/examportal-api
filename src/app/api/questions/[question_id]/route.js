@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -12,7 +13,7 @@ function questionId(params) {
   return ObjectId.isValid(params.question_id) ? new ObjectId(params.question_id) : null;
 }
 
-export async function GET(_request, { params }) {
+async function handleGET(_request, { params }) {
   try {
     const resolvedParams = await params;
     const _id = questionId(resolvedParams);
@@ -26,7 +27,7 @@ export async function GET(_request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+async function handlePUT(request, { params }) {
   try {
     const resolvedParams = await params;
     const _id = questionId(resolvedParams);
@@ -44,7 +45,7 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(_request, { params }) {
+async function handleDELETE(_request, { params }) {
   try {
     const resolvedParams = await params;
     const _id = questionId(resolvedParams);
@@ -60,3 +61,8 @@ export async function DELETE(_request, { params }) {
     return errorResponse("Unable to delete the question.", 500);
   }
 }
+
+export const GET = withAuth("teacher", handleGET);
+export const PUT = withAuth("teacher", handlePUT);
+export const DELETE = withAuth("teacher", handleDELETE);
+

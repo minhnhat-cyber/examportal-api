@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -20,7 +21,7 @@ export function OPTIONS() { return new Response(null, { status: 204, headers: co
  * saved in time) but is flagged `autoSubmitted` so the teacher can see the
  * student ran out of time.
  */
-export async function POST(request, { params }) {
+async function handlePOST(request, { params }) {
   try {
     const { attempt_id } = await params;
     if (!ObjectId.isValid(attempt_id)) return errorResponse("Invalid attempt ID.", 400);
@@ -73,3 +74,5 @@ export async function POST(request, { params }) {
     return errorResponse("Unable to submit the attempt.", 500);
   }
 }
+export const POST = withAuth("student", handlePOST);
+

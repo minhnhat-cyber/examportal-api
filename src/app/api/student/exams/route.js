@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
 import { successResponse, errorResponse } from "@/lib/utils";
@@ -5,7 +6,7 @@ import { getCurrentStudent } from "@/lib/current-user";
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: corsHeaders });
 }
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const client = await getClientPromise();
     const db = client.db(process.env.DB_NAME || "examportal");
@@ -52,3 +53,5 @@ return successResponse({ items });
     return errorResponse("Unable to load available exams.", 500);
   }
 }
+export const GET = withAuth("student", handleGET);
+

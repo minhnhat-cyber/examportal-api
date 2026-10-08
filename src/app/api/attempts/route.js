@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -6,7 +7,7 @@ import { getCurrentStudent } from "@/lib/current-user";
 
 export function OPTIONS() { return new Response(null, { status: 204, headers: corsHeaders }); }
 
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status")?.trim();
@@ -36,7 +37,7 @@ export async function GET(request) {
  * so the deadline survives a refresh, a closed tab or a changed system clock.
  * An unfinished attempt is resumed rather than duplicated.
  */
-export async function POST(request) {
+async function handlePOST(request) {
   try {
     const body = await request.json().catch(() => ({}));
     const examId = String(body.examId || "").trim();
@@ -104,3 +105,5 @@ export async function POST(request) {
     return errorResponse("Unable to start the attempt.", 500);
   }
 }
+export const GET = withAuth("teacher", handleGET);export const POST = withAuth("student", handlePOST);
+

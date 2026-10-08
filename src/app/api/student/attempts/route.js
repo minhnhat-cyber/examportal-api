@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
 import { errorResponse, successResponse } from "@/lib/utils";
@@ -8,7 +9,7 @@ import { serializeAttemptSummary } from "@/lib/student-serializers";
 export function OPTIONS() { return new Response(null, { status: 204, headers: corsHeaders }); }
 
 /** The current student's own attempt history, newest first. */
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status")?.trim();
@@ -51,3 +52,5 @@ export async function GET(request) {
     return errorResponse("Unable to load your attempt history.", 500);
   }
 }
+export const GET = withAuth("student", handleGET);
+

@@ -1,10 +1,11 @@
+import { withAuth } from "@/lib/auth";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
 import { errorResponse, successResponse } from "@/lib/utils";
 
 export function OPTIONS() { return new Response(null, { status: 204, headers: corsHeaders }); }
 
-export async function GET() {
+async function handleGET() {
   try {
     const client = await getClientPromise(); const db = client.db(process.env.DB_NAME || "examportal");
     const [summary, byExam] = await Promise.all([
@@ -14,3 +15,6 @@ export async function GET() {
     return successResponse({ summary: { averageScore: Number((summary?.averageScore || 0).toFixed(1)), highestScore: summary?.highestScore || 0, lowestScore: summary?.lowestScore || 0, submittedAttempts: summary?.submittedAttempts || 0 }, byExam });
   } catch (error) { console.error("GET Teacher Report Exception", error); return errorResponse("Unable to load report.", 500); }
 }
+
+export const GET = withAuth("teacher", handleGET);
+

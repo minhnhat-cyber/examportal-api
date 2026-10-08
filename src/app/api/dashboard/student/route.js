@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
 import { errorResponse, successResponse } from "@/lib/utils";
@@ -8,7 +9,7 @@ import { serializeAttemptSummary } from "@/lib/student-serializers";
 export function OPTIONS() { return new Response(null, { status: 204, headers: corsHeaders }); }
 
 /** Headline numbers and shortcuts for the student landing page. */
-export async function GET(request) {
+async function handleGET(request) {
   try {
     const client = await getClientPromise();
     const db = client.db(process.env.DB_NAME || "examportal");
@@ -54,3 +55,5 @@ export async function GET(request) {
     return errorResponse("Unable to load your dashboard.", 500);
   }
 }
+export const GET = withAuth("student", handleGET);
+

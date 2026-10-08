@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -7,12 +8,12 @@ import { serializeExam, validateExam } from "@/lib/exam-validation";
 export function OPTIONS() { return new Response(null, { status: 204, headers: corsHeaders }); }
 const toId = (value) => ObjectId.isValid(value) ? new ObjectId(value) : null;
 
-export async function GET(_request, { params }) {
+async function handleGET(_request, { params }) {
   try { const { exam_id } = await params; const _id = toId(exam_id); if (!_id) return errorResponse("Invalid exam ID.", 400); const client = await getClientPromise(); const exam = await client.db(process.env.DB_NAME || "examportal").collection("exams").findOne({ _id }); return exam ? successResponse(serializeExam(exam)) : errorResponse("Exam not found.", 404); }
   catch (error) { console.error("GET Exam Exception", error); return errorResponse("Unable to load the exam.", 500); }
 }
 
-export async function PUT(request, { params }) {
+async function handlePUT(request, { params }) {
   try {
     const { exam_id } = await params; const _id = toId(exam_id); if (!_id) return errorResponse("Invalid exam ID.", 400);
     const validation = validateExam(await request.json()); if (validation.error) return errorResponse(validation.error, 400);
@@ -24,7 +25,7 @@ export async function PUT(request, { params }) {
   } catch (error) { if (error?.code === 11000) return errorResponse("Exam code already exists.", 409); console.error("PUT Exam Exception", error); return errorResponse("Unable to update the exam.", 500); }
 }
 
-export async function DELETE(_request, { params }) {
+async function handleDELETE(_request, { params }) {
   try {
     const { exam_id } = await params; const _id = toId(exam_id); if (!_id) return errorResponse("Invalid exam ID.", 400);
     const client = await getClientPromise(); const db = client.db(process.env.DB_NAME || "examportal");
@@ -33,3 +34,8 @@ export async function DELETE(_request, { params }) {
     return result.deletedCount ? successResponse({ message: "Exam deleted." }) : errorResponse("Exam not found.", 404);
   } catch (error) { console.error("DELETE Exam Exception", error); return errorResponse("Unable to delete the exam.", 500); }
 }
+
+export const GET = withAuth("teacher", handleGET);
+export const PUT = withAuth("teacher", handlePUT);
+export const DELETE = withAuth("teacher", handleDELETE);
+

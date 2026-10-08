@@ -1,14 +1,6 @@
-import { ObjectId } from "mongodb";
+import { currentUser } from "./auth.js";
 
 export async function getCurrentStudent(request, db) {
-    const filter = { role: "student", status: "active" };
-    const users = db.collection("users");
-    const headerId = request.headers.get("x-student-id")?.trim();
-    if (headerId) {
-        if (!ObjectId.isValid(headerId)) {
-            return null;
-        }
-        return users.findOne({ ...filter, _id: new ObjectId(headerId) });
-    }
-    return users.findOne(filter, { sort: { name: 1 }});
+    const user = await currentUser(request, db);
+    return user?.role === "student" ? user : null;
     }

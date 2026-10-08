@@ -1,3 +1,4 @@
+import { withAuth } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { getClientPromise } from "@/lib/mongodb";
 import corsHeaders from "@/lib/cors";
@@ -38,7 +39,7 @@ async function loadOwnedAttempt(request, db, attemptId) {
  * been submitted. An attempt whose time ran out while the tab was closed is
  * graded here before it is returned.
  */
-export async function GET(request, { params }) {
+async function handleGET(request, { params }) {
   try {
     const { attempt_id } = await params;
     const client = await getClientPromise();
@@ -86,7 +87,7 @@ export async function GET(request, { params }) {
  * answer set and it replaces what is stored. Rejected once the deadline has
  * passed — that attempt gets auto-graded instead.
  */
-export async function PATCH(request, { params }) {
+async function handlePATCH(request, { params }) {
   try {
     const { attempt_id } = await params;
     const client = await getClientPromise();
@@ -124,3 +125,6 @@ export async function PATCH(request, { params }) {
     return errorResponse("Unable to save your answers.", 500);
   }
 }
+export const GET = withAuth("student", handleGET);
+export const PATCH = withAuth("student", handlePATCH);
+
