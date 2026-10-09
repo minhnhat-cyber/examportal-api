@@ -127,9 +127,6 @@ npm start
 
 Deploy the API and MongoDB on a virtual machine. Restrict MongoDB to the private host/network, configure production environment variables, and expose the API through HTTPS using a reverse proxy.
 
-## Screenshots
-
-Application screenshots are maintained in the [frontend repository](https://github.com/minhnhat-cyber/examportal-frontend#screenshots).
 
 ## Current project scope
 
