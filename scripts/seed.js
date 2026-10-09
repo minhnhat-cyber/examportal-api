@@ -12,8 +12,8 @@ try{
  const db=client.db(dbName),users=db.collection("users"),questions=db.collection("questions"),exams=db.collection("exams"),attempts=db.collection("attempts");
  await Promise.all([users.createIndex({email:1},{unique:true}),questions.createIndex({code:1},{unique:true}),exams.createIndex({code:1},{unique:true}),attempts.createIndex({examId:1,studentId:1,attemptNumber:1},{unique:true})]);
  const password=await bcrypt.hash("Password123!",12);
- const teacher=await save(users,{email:"teacher@examportal.local"},{name:"Dr. Taylor",email:"teacher@examportal.local",password,role:"teacher",status:"active",updatedAt:now});
- const studentInputs=[["John Doe","john@examportal.local"],["Alice Johnson","alice@examportal.local"],["Michael Chen","michael@examportal.local"]];
+ const teacher=await save(users,{email:"teacher@examportal"},{name:"Dr. Taylor",email:"teacher@examportal",password,role:"teacher",status:"active",updatedAt:now});
+ const studentInputs=[["John Doe","john@examportal"],["Alice Johnson","alice@examportal"],["Michael Chen","michael@examportal"]];
  const students=[];for(const [name,email] of studentInputs)students.push(await save(users,{email},{name,email,password,role:"student",status:"active",updatedAt:now}));
  const inputs=[
   ["Q-DS-001","Which data structure uses the Last In First Out principle?",["Queue","Stack","Array","Linked List"],1,"Data Structures","easy"],
@@ -29,3 +29,4 @@ try{
  console.log("Seed complete: 4 users, 5 questions, 2 exams, 1 attempt.");
  console.log("Demo password: Password123!");
 }finally{await client.close()}
+

@@ -91,7 +91,7 @@ The API is available at `http://localhost:3000/backend`.
 
 Sign in with `POST /backend/api/auth/login` using email and password. Sessions use an eight-hour HttpOnly cookie; clients must include credentials. `GET /backend/api/auth/me` returns the signed-in account and `POST /backend/api/auth/logout` revokes its session. Teacher management endpoints require the teacher role; student endpoints use the authenticated student's identity, not a caller-supplied ID. Production requires HTTPS and an exact `FRONTEND_URL` origin.
 
-Seeded demo accounts: `teacher@examportal.local`, `alice@examportal.local`, and `john@examportal.local`, with password `Password123!`. These are for evaluation only: change demo passwords and remove unused accounts before real use. Never rerun the seed against live data because it resets demo accounts and exams.
+Seeded demo accounts: `teacher@examportal`, `alice@examportal`, and `john@examportal`, with password `Password123!`. These are for evaluation only: change demo passwords and remove unused accounts before real use. Never rerun the seed against live data because it resets demo accounts and exams.
 
 Run authentication checks with `node --test src/lib/auth.test.js`.
 
@@ -138,3 +138,4 @@ The proof of concept focuses on multiple-choice examinations. Webcam monitoring,
 ## License
 
 This project was created for academic use.
+
