@@ -4,7 +4,7 @@ ExamPortal is an online multiple-choice examination management system for teache
 
 ## Team members
 
-- [Nguyen Nhat Minh](https://github.com/minhnhat-cyber)
+- Nguyen Nhat Minh
 - Krisdipas Kongsakul
 
 ## Project repositories
